@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UK AI Accountant — Workspace</title>
+  <link rel="stylesheet" href="/internal/css/base.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-brand">
+      <strong>UK AI Accountant</strong>
+      <span>Workspace</span>
+    </div>
+    <nav class="nav-cluster">
+      <button type="button" class="nav-item active" data-view="chat">Chat</button>
+      <button type="button" class="nav-item" data-view="reminders">Reminders</button>
+      <a class="nav-item" href="/internal/spendings.html">Spendings</a>
+      <a class="nav-item" href="/internal/onboarding.html?force=1">Edit onboarding</a>
+      <a class="nav-item" href="/internal/setup-summary.html">Setup summary</a>
+    </nav>
+    <div class="header-field" style="align-items:flex-end">
+      <label>Signed in</label>
+      <span id="auth-display" style="font-size:0.9rem;font-weight:600;color:var(--color-text)"></span>
+      <button type="button" class="btn btn-ghost" id="btn-logout" style="margin-top:0.35rem;padding:0.35rem 0.65rem;font-size:0.8rem">Log out</button>
+    </div>
+  </header>
+
+  <div class="workspace-context-bar" id="workspace-context-bar" aria-live="polite">
+    <div class="workspace-context-inner">
+      <span class="workspace-context-icon" aria-hidden="true">⌁</span>
+      <p class="workspace-context-text" id="workspace-context-text">Loading workspace context…</p>
+    </div>
+  </div>
+
+  <div class="page-wrap">
+    <section id="view-chat">
+      <p class="eyebrow" style="margin-bottom:0.25rem">Assistant</p>
+      <h1 class="page-title">Conversations</h1>
+      <p class="page-sub">Chat with the multi-agent accountant. Companies House tools run when relevant.</p>
+
+      <div class="chat-shell">
+        <div class="chat-card">
+          <div class="chat-toolbar">
+            <button type="button" class="btn btn-secondary" id="btn-new-chat">New chat</button>
+            <button type="button" class="btn btn-ghost" id="btn-refresh-chat">Reload thread</button>
+            <span class="conv-hint" id="conv-hint"></span>
+          </div>
+          <div class="chat-msgs" id="chat-msgs" aria-live="polite"></div>
+          <div class="pending-files" id="pending-files"></div>
+          <form class="chat-composer" id="chat-form" onsubmit="event.preventDefault(); return false;">
+            <div class="chat-composer-inner">
+              <div class="upload-zone" title="Attach files">
+                <label for="file-input">＋</label>
+                <input type="file" id="file-input" multiple accept="image/*,application/pdf,.pdf" />
+              </div>
+              <div class="composer-fields">
+                <label class="composer-intent" style="display:flex;align-items:center;gap:0.45rem;font-size:0.82rem;color:var(--color-text-muted);margin-bottom:0.35rem;cursor:pointer;user-select:none">
+                  <input type="checkbox" id="record-spending" />
+                  Record as spending
+                </label>
+                <textarea id="chat-input" name="message" rows="2" placeholder="Ask about filings, deadlines, or company facts…" autocomplete="off"></textarea>
+                <span class="composer-hint"><kbd>Enter</kbd> to send · <kbd>Shift</kbd>+<kbd>Enter</kbd> for newline</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-send" id="btn-send">Send</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-reminders" class="hidden">
+      <p class="eyebrow" style="margin-bottom:0.25rem">Workspace</p>
+      <h1 class="page-title">Reminders</h1>
+      <p class="page-sub">
+        Compliance deadlines from Companies House drive automatic nudges (30 / 14 / 7 days before and on the due date).
+        Delivery uses your preferred channel where implemented; WhatsApp and Slack are reserved for later integration.
+      </p>
+
+      <div id="reminder-alert" class="alert-inline alert-error hidden" role="alert"></div>
+
+      <div id="compliance-board-note" class="surface surface-pad hidden" style="margin-bottom:1rem;font-size:0.88rem;line-height:1.5;color:var(--color-text-muted)"></div>
+
+      <div class="rem-dash-grid" style="grid-template-columns:1fr 1fr;align-items:start">
+        <div class="surface surface-pad" style="margin-bottom:1rem">
+          <div class="reminder-list-header" style="margin-bottom:0.75rem">
+            <h2 class="form-section-title" style="margin:0">Compliance deadlines</h2>
+            <button type="button" class="btn btn-secondary" id="btn-rem-refresh">Refresh</button>
+          </div>
+          <p class="page-sub" style="margin:0 0 0.75rem;font-size:0.8rem">Synced from Companies House when your company is verified and the reminders pipeline is on.</p>
+          <div id="deadline-list" class="deadline-stack"></div>
+        </div>
+
+        <div>
+          <div class="reminder-list-header" style="margin-bottom:0.75rem">
+            <h2 class="form-section-title" style="margin:0">Automatic schedule</h2>
+          </div>
+          <p class="page-sub" style="margin:0 0 0.75rem;font-size:0.8rem">Generated reminder jobs linked to each deadline (cancel or edit date as needed).</p>
+          <div class="reminder-grid" id="reminder-grid-auto"></div>
+
+          <div class="reminder-list-header" style="margin:1.25rem 0 0.75rem">
+            <h2 class="form-section-title" style="margin:0">Manual reminders</h2>
+          </div>
+          <p class="page-sub" style="margin:0 0 0.75rem;font-size:0.8rem">Optional one-off reminders alongside the compliance schedule.</p>
+          <div class="reminder-grid" id="reminder-grid-manual"></div>
+        </div>
+      </div>
+
+      <details class="surface surface-pad" style="margin-top:1rem">
+        <summary class="form-section-title" style="cursor:pointer;list-style-position:outside">Add a custom reminder</summary>
+        <form id="reminder-form" style="margin-top:1rem" onsubmit="event.preventDefault(); return false;">
+          <div class="form-grid">
+            <label>Title <input type="text" id="rem-title" placeholder="e.g. Call accountant" /></label>
+            <label>Type <input type="text" id="rem-type" value="custom" required /></label>
+            <label>Date <input type="date" id="rem-date" required /></label>
+            <label>Channel <select id="rem-channel"></select></label>
+            <label>Entity type <input type="text" id="rem-entity-type" placeholder="optional" /></label>
+            <label>Entity id <input type="text" id="rem-entity-id" placeholder="optional" /></label>
+            <label style="grid-column:1/-1">Company record id <input type="text" id="rem-company-id" placeholder="Optional internal company UUID" /></label>
+          </div>
+          <button type="button" class="btn btn-primary" id="btn-create-reminder" style="margin-top:1rem">Create manual reminder</button>
+        </form>
+      </details>
+    </section>
+  </div>
+
+  <input type="hidden" id="user-id" value="" />
+  <script type="module" src="/internal/js/app_entry.js"></script>
+</body>
+</html>

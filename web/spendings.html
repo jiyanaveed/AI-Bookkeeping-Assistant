@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Spendings — UK AI Accountant</title>
+  <link rel="stylesheet" href="/internal/css/base.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-brand">
+      <strong>UK AI Accountant</strong>
+      <span>Spendings</span>
+    </div>
+    <nav class="nav-cluster">
+      <a class="nav-item" href="/internal/app.html">Workspace</a>
+      <a class="nav-item" href="/internal/app.html?view=reminders">Reminders</a>
+      <a class="nav-item" href="/internal/setup-summary.html">Setup summary</a>
+    </nav>
+    <div class="header-field" style="align-items:flex-end">
+      <label>Signed in</label>
+      <span id="auth-display" style="font-size:0.9rem;font-weight:600;color:var(--color-text)"></span>
+      <button type="button" class="btn btn-ghost" id="btn-logout" style="margin-top:0.35rem;padding:0.35rem 0.65rem;font-size:0.8rem">Log out</button>
+    </div>
+  </header>
+
+  <div class="page-wrap">
+    <div id="banner" class="alert-inline alert-error hidden" role="alert"></div>
+    <p class="eyebrow" style="margin-bottom:0.25rem">Bookkeeping</p>
+    <h1 class="page-title">Spendings</h1>
+    <p class="page-sub">Saved spend lines from chat and the ledger. Totals below are summed in your browser for a quick read.</p>
+
+    <div class="reminder-list-header" style="margin:1rem 0 0.75rem">
+      <h2 class="form-section-title" style="margin:0">Ledger</h2>
+      <button type="button" class="btn btn-secondary" id="btn-refresh-tx">Refresh</button>
+    </div>
+
+    <div class="surface surface-pad" style="margin-bottom:1rem">
+      <div class="rem-dash-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem">
+        <div>
+          <p class="page-sub" style="margin:0;font-size:0.75rem">Count</p>
+          <p id="tx-count" style="margin:0.25rem 0 0;font-size:1.35rem;font-weight:600">—</p>
+        </div>
+        <div>
+          <p class="page-sub" style="margin:0;font-size:0.75rem">Running total (all listed)</p>
+          <p id="tx-total" style="margin:0.25rem 0 0;font-size:1.35rem;font-weight:600">—</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="surface surface-pad" style="overflow-x:auto">
+      <table class="data-table" id="tx-table" style="width:100%;border-collapse:collapse;font-size:0.88rem">
+        <thead>
+          <tr style="text-align:left;border-bottom:1px solid var(--color-border)">
+            <th style="padding:0.5rem 0.65rem">Reference</th>
+            <th style="padding:0.5rem 0.65rem">Date</th>
+            <th style="padding:0.5rem 0.65rem">Amount</th>
+            <th style="padding:0.5rem 0.65rem">Description</th>
+            <th style="padding:0.5rem 0.65rem">Source</th>
+          </tr>
+        </thead>
+        <tbody id="tx-body"></tbody>
+      </table>
+      <p id="tx-empty" class="page-sub hidden" style="margin:0.75rem 0 0">No transactions yet. Record spending from chat (toggle “Record as spending”) or add lines via the API.</p>
+    </div>
+  </div>
+
+  <input type="hidden" id="user-id" value="" />
+  <script type="module" src="/internal/js/spendings_page.js"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "uk-ai-accountant-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "vercel-build": "node scripts/vercel-build-web.mjs"
+  }
+}

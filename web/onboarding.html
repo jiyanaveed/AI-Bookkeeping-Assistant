@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Guided setup — Onboarding</title>
+  <link rel="stylesheet" href="/internal/css/base.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-brand">
+      <strong>UK AI Accountant</strong>
+      <span>Guided setup</span>
+    </div>
+    <nav class="nav-cluster">
+      <a class="nav-item" href="/internal/index.html">Home</a>
+      <button type="button" class="nav-item active" disabled style="opacity:1;cursor:default">Onboarding</button>
+    </nav>
+    <div class="header-field" style="align-items:flex-end">
+      <label>Signed in</label>
+      <span id="auth-email-display" style="font-size:0.88rem;font-weight:600"></span>
+      <button type="button" class="btn btn-ghost" id="btn-onb-logout" style="margin-top:0.35rem;padding:0.35rem 0.65rem;font-size:0.8rem">Log out</button>
+    </div>
+  </header>
+
+  <div class="page-wrap">
+    <p class="eyebrow">Setup</p>
+    <h1 class="page-title">Business profile</h1>
+    <p class="page-sub">Capture structured fields, verify at Companies House where applicable, then submit for routing. The workspace opens after you review the setup summary.</p>
+
+    <div class="onb-layout">
+      <aside class="steps-rail surface surface-pad">
+        <p class="section-title" style="border:none;padding:0;margin:0 0 0.75rem">Steps</p>
+        <ol>
+          <li class="is-active"><span class="step-num">1</span><span>Business context &amp; entity</span></li>
+          <li><span class="step-num">2</span><span>Tax, payroll &amp; income</span></li>
+          <li><span class="step-num">3</span><span>Contact &amp; channels</span></li>
+          <li><span class="step-num">4</span><span>Verify, route &amp; submit</span></li>
+        </ol>
+      </aside>
+
+      <div class="surface onb-panel">
+        <div class="section-block">
+          <h2 class="section-title">Business context</h2>
+          <div class="form-grid">
+            <label>Acting as <select id="acting_as"><option value="">— Select —</option><option value="self">Self</option><option value="my_business">My business</option><option value="my_company_and_me">My company &amp; me</option><option value="accountant_or_bookkeeper_for_clients">Accountant / bookkeeper</option></select></label>
+            <label>Business type <select id="business_type"><option value="">— Select —</option><option value="sole_trader">Sole trader</option><option value="limited_company">Limited company</option><option value="landlord">Landlord</option><option value="sole_trader_and_landlord">Sole trader &amp; landlord</option><option value="partnership">Partnership</option><option value="accountant_or_bookkeeper">Accountant or bookkeeper</option><option value="not_sure">Not sure</option></select></label>
+            <label id="wrap-reg" class="hidden">Registration status <select id="company_registration_status"><option value="">—</option><option value="already_registered">Already registered</option><option value="want_to_register">Want to register</option><option value="registration_in_progress">In progress</option><option value="not_sure">Not sure</option></select></label>
+            <label id="wrap-co" class="hidden">Company name or number <input type="text" id="company_name_or_number" placeholder="Search Companies House" /></label>
+            <label id="wrap-trade" class="hidden">Trade status <select id="company_trade_status"><option value="">—</option><option value="actively_trading">Actively trading</option><option value="not_yet_trading">Not yet trading</option><option value="dormant">Dormant</option><option value="not_sure">Not sure</option></select></label>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2 class="section-title">Tax, payroll &amp; income</h2>
+          <div class="form-grid">
+            <label style="grid-column:1/-1">Income types (comma-separated) <input type="text" id="income_types" placeholder="self_employment_income, rental_property_income" /></label>
+            <label>Self assessment <select id="self_assessment_registered"><option value="">—</option><option value="yes">Yes</option><option value="no">No</option><option value="not_sure">Not sure</option></select></label>
+            <label>VAT status <select id="vat_status"><option value="">—</option><option value="vat_registered">VAT registered</option><option value="not_vat_registered">Not VAT registered</option><option value="not_sure">Not sure</option><option value="monitor_threshold">Monitor threshold</option></select></label>
+            <label>Payroll <select id="payroll_status"><option value="">—</option><option value="no_employees">No employees</option><option value="director_only">Director only</option><option value="has_employees">Has employees</option><option value="not_sure">Not sure</option></select></label>
+            <label>Est. 12-mo taxable turnover <input type="text" id="estimated_12_month_taxable_turnover" placeholder="e.g. 85000" /></label>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <h2 class="section-title">Contact &amp; preferences</h2>
+          <div class="form-grid">
+            <label>Reminder channel <select id="preferred_reminder_channel"><option value="in_app">In app</option><option value="email">Email</option><option value="whatsapp">WhatsApp</option><option value="slack">Slack</option></select></label>
+            <label>Email <input type="email" id="email" autocomplete="email" /></label>
+            <label>Phone <input type="text" id="phone_number" autocomplete="tel" /></label>
+            <label>Business start date <input type="date" id="business_start_date" /></label>
+          </div>
+        </div>
+
+        <div class="onb-actions">
+          <button type="button" id="btn-save" class="btn btn-secondary">Save progress</button>
+          <button type="button" id="btn-verify" class="btn btn-primary">Verify company (CH)</button>
+          <button type="button" id="btn-route" class="btn btn-secondary">Re-evaluate routing</button>
+          <button type="button" id="btn-submit" class="btn btn-primary">Submit onboarding</button>
+        </div>
+
+        <div id="verify-panel" class="surface surface-pad hidden" style="margin-top:1rem;border:1px solid var(--color-border)" aria-live="polite"></div>
+        <p id="verify-inline-status" class="ob-inline-status" aria-live="polite"></p>
+        <div id="onboarding-feedback" class="onboarding-feedback" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/internal/js/onboarding_page.js"></script>
+</body>
+</html>

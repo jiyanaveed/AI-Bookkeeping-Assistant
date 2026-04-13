@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Developer API console (legacy)</title>
+  <link rel="stylesheet" href="/internal/css/base.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-brand">
+      <strong>UK AI Accountant</strong>
+      <span>Legacy API console — no auth header</span>
+    </div>
+    <nav class="nav-cluster">
+      <button type="button" class="nav-item active" data-view="chat">Chat</button>
+      <button type="button" class="nav-item" data-view="reminders">Reminders</button>
+      <a class="nav-item" href="/internal/onboarding.html?force=1">Onboarding</a>
+      <a class="nav-item" href="/internal/admin.html">Admin</a>
+      <a class="nav-item" href="/internal/index.html">Product home</a>
+    </nav>
+    <div class="header-field">
+      <label for="user-id">Test user ID</label>
+      <input type="text" id="user-id" name="user_id" autocomplete="off" spellcheck="false" placeholder="UUID" />
+    </div>
+  </header>
+
+  <div class="page-wrap">
+    <p class="alert-inline alert-error" style="margin-bottom:1rem">Calls here omit <code class="inline">Authorization</code>. Use the product flow from <a href="/internal/index.html">Home</a> for real signup and gated APIs.</p>
+
+    <section id="view-chat">
+      <p class="eyebrow" style="margin-bottom:0.25rem">Assistant</p>
+      <h1 class="page-title">Conversations</h1>
+      <p class="page-sub">Chat with the multi-agent accountant.</p>
+
+      <div class="chat-shell">
+        <div class="chat-card">
+          <div class="chat-toolbar">
+            <button type="button" class="btn btn-secondary" id="btn-new-chat">New chat</button>
+            <button type="button" class="btn btn-ghost" id="btn-refresh-chat">Reload thread</button>
+            <span class="conv-hint" id="conv-hint"></span>
+          </div>
+          <div class="chat-msgs" id="chat-msgs" aria-live="polite"></div>
+          <div class="pending-files" id="pending-files"></div>
+          <form class="chat-composer" id="chat-form" onsubmit="event.preventDefault(); return false;">
+            <div class="chat-composer-inner">
+              <div class="upload-zone" title="Attach files">
+                <label for="file-input">＋</label>
+                <input type="file" id="file-input" multiple accept="image/*,application/pdf,.pdf" />
+              </div>
+              <div class="composer-fields">
+                <textarea id="chat-input" name="message" rows="2" placeholder="Message…" autocomplete="off"></textarea>
+                <span class="composer-hint"><kbd>Enter</kbd> to send · <kbd>Shift</kbd>+<kbd>Enter</kbd> for newline</span>
+              </div>
+              <button type="button" class="btn btn-primary btn-send" id="btn-send">Send</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-reminders" class="hidden">
+      <p class="eyebrow" style="margin-bottom:0.25rem">Workspace</p>
+      <h1 class="page-title">Reminders</h1>
+      <p class="page-sub">Manual reminder tests.</p>
+
+      <div id="reminder-alert" class="alert-inline alert-error hidden" role="alert"></div>
+
+      <div class="rem-dash-grid">
+        <form id="reminder-form" class="surface surface-pad" onsubmit="event.preventDefault(); return false;">
+          <h2 class="form-section-title">Create reminder</h2>
+          <div class="form-grid">
+            <label>Title <input type="text" id="rem-title" placeholder="e.g. Annual accounts" /></label>
+            <label>Type <input type="text" id="rem-type" value="accounts" required /></label>
+            <label>Date <input type="date" id="rem-date" required /></label>
+            <label>Channel <select id="rem-channel"></select></label>
+            <label>Entity type <input type="text" id="rem-entity-type" placeholder="company" /></label>
+            <label>Entity id <input type="text" id="rem-entity-id" placeholder="Company number" /></label>
+            <label style="grid-column:1/-1">Company record id <input type="text" id="rem-company-id" placeholder="Optional internal company UUID" /></label>
+          </div>
+          <button type="button" class="btn btn-primary" id="btn-create-reminder" style="margin-top:1rem">Create reminder</button>
+        </form>
+
+        <div>
+          <div class="reminder-list-header">
+            <h2 class="form-section-title" style="margin:0">Upcoming &amp; active</h2>
+            <button type="button" class="btn btn-secondary" id="btn-rem-refresh">Refresh</button>
+          </div>
+          <div class="reminder-grid" id="reminder-grid"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script type="module" src="/internal/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Setup summary — UK AI Accountant</title>
+  <link rel="stylesheet" href="/internal/css/base.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-brand">
+      <strong>UK AI Accountant</strong>
+      <span>Setup summary</span>
+    </div>
+    <nav class="nav-cluster">
+      <a class="nav-item" href="/internal/onboarding.html?force=1">Back to setup</a>
+    </nav>
+    <div class="header-field" style="align-items:flex-end">
+      <button type="button" class="btn btn-ghost" id="btn-logout" style="padding:0.35rem 0.65rem;font-size:0.8rem">Log out</button>
+    </div>
+  </header>
+
+  <div class="page-wrap">
+    <div id="banner" class="alert-inline alert-error hidden" role="alert"></div>
+    <h1 class="page-title">Your setup</h1>
+    <p class="page-sub" id="subhead">Here’s a clear summary of what we’ll use in your workspace—no jargon required.</p>
+
+    <div id="incomplete-panel" class="surface surface-pad hidden">
+      <h2 class="form-section-title">Setup not finished</h2>
+      <p class="page-sub" style="margin-top:0">Complete required fields and submit onboarding to unlock the workspace.</p>
+      <a class="btn btn-primary" href="/internal/onboarding.html?force=1" style="text-decoration:none;display:inline-block;margin-top:0.5rem">Continue setup</a>
+    </div>
+
+    <div id="summary-root" class="admin-grid hidden"></div>
+
+    <div id="cta-wrap" class="hidden" style="margin-top:1.5rem">
+      <a class="btn btn-primary" id="btn-enter-app" href="/internal/app.html" style="text-decoration:none">Enter workspace</a>
+    </div>
+  </div>
+
+  <script type="module" src="/internal/js/setup_summary.js"></script>
+</body>
+</html>

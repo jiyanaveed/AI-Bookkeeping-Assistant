@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": "web",
+  "rewrites": [
+    { "source": "/internal", "destination": "/index.html" },
+    { "source": "/internal/", "destination": "/index.html" },
+    { "source": "/internal/:path*", "destination": "/:path*" }
+  ]
+}

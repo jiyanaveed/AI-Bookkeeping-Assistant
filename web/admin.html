@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pipeline monitor — Admin</title>
+  <link rel="stylesheet" href="/internal/css/base.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-brand">
+      <strong>UK AI Accountant</strong>
+      <span>Internal pipeline control</span>
+    </div>
+    <nav class="nav-cluster">
+      <a class="nav-item" href="/internal/index.html">Product home</a>
+      <a class="nav-item" href="/internal/dev-console.html">Dev console</a>
+      <button type="button" class="nav-item active" disabled style="opacity:1;cursor:default">Admin</button>
+    </nav>
+  </header>
+
+  <div class="page-wrap">
+    <p class="eyebrow">Operations</p>
+    <h1 class="page-title">Onboarding &amp; pipeline monitor</h1>
+    <p class="page-sub">Authenticate with <code class="inline">X-Admin-Key</code> (stored locally for demo only). Inspect users, pipelines, flags, and events.</p>
+
+    <div id="admin-toast" class="alert-inline alert-error hidden" role="alert"></div>
+
+    <div class="admin-grid">
+      <section class="surface surface-pad">
+        <h2 class="form-section-title">Access &amp; search</h2>
+        <div class="admin-toolbar">
+          <label class="field-label">Admin API key
+            <input type="password" id="admin-key" autocomplete="off" placeholder="ADMIN_API_KEY" />
+          </label>
+          <label class="field-label">Search users
+            <input type="text" id="search-q" placeholder="Email, user id, company #" />
+          </label>
+          <button type="button" class="btn btn-primary" id="btn-search">Search</button>
+        </div>
+        <div id="search-results" class="monitor-section" style="margin-top:1rem"></div>
+      </section>
+
+      <section class="surface surface-pad">
+        <h2 class="form-section-title">Monitor</h2>
+        <div class="admin-toolbar">
+          <label class="field-label">User id
+            <input type="text" id="mon-uid" placeholder="UUID" />
+          </label>
+          <button type="button" class="btn btn-primary" id="btn-load">Load monitor</button>
+          <button type="button" class="btn btn-secondary" id="btn-route">Rerun routing</button>
+        </div>
+        <div id="monitor-root" class="monitor-section" style="margin-top:1rem"></div>
+      </section>
+    </div>
+  </div>
+  <script type="module" src="/internal/js/admin_page.js"></script>
+</body>
+</html>

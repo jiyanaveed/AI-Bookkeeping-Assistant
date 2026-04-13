@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Log in — UK AI Accountant</title>
+  <link rel="stylesheet" href="/internal/css/base.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-brand">
+      <strong>UK AI Accountant</strong>
+      <span>Sign in</span>
+    </div>
+    <nav class="nav-cluster">
+      <a class="nav-item" href="/internal/index.html">Home</a>
+      <a class="nav-item" href="/internal/signup.html">Sign up</a>
+    </nav>
+  </header>
+
+  <div class="page-wrap" style="max-width:420px;margin:2rem auto">
+    <h1 class="page-title">Log in</h1>
+    <p class="page-sub">We will send you to setup or your workspace depending on progress.</p>
+
+    <form id="form" class="surface surface-pad">
+      <div id="err" class="alert-inline alert-error hidden" role="alert"></div>
+      <label class="field-label">Email
+        <input type="email" id="email" required autocomplete="email" />
+      </label>
+      <label class="field-label">Password
+        <input type="password" id="password" required autocomplete="current-password" />
+      </label>
+      <button type="submit" class="btn btn-primary" style="width:100%;margin-top:1rem">Continue</button>
+    </form>
+  </div>
+
+  <script type="module">
+    import { apiUrl } from "/internal/js/api.js";
+    import { setSession, fetchMe, APP_ACCESS_STATUSES } from "/internal/js/gate.js";
+
+    const err = document.getElementById("err");
+    document.getElementById("form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      err.classList.add("hidden");
+      const body = {
+        email: document.getElementById("email").value.trim(),
+        password: document.getElementById("password").value,
+      };
+      try {
+        const r = await fetch(apiUrl("/v1/auth/login"), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        const t = await r.text();
+        if (!r.ok) throw new Error(t || r.status);
+        const data = JSON.parse(t);
+        setSession(data);
+        const me = await fetchMe();
+        if (!me) throw new Error("Session error");
+        if (APP_ACCESS_STATUSES.has(me.onboarding.status)) {
+          window.location.href = "/internal/app.html";
+        } else {
+          window.location.href = "/internal/onboarding.html";
+        }
+      } catch (x) {
+        err.textContent = x.message || String(x);
+        err.classList.remove("hidden");
+      }
+    });
+  </script>
+</body>
+</html>
