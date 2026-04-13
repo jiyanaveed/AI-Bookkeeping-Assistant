@@ -97,6 +97,14 @@ def apply_sqlite_migrations(engine: Engine) -> None:
             if "message_id" not in rcols:
                 conn.execute(text("ALTER TABLE receipts ADD COLUMN message_id VARCHAR(36)"))
 
+    if insp.has_table("uploads"):
+        ucols = {c["name"] for c in insp.get_columns("uploads")}
+        with engine.begin() as conn:
+            if "storage_provider" not in ucols:
+                conn.execute(
+                    text("ALTER TABLE uploads ADD COLUMN storage_provider VARCHAR(32) NOT NULL DEFAULT 'local'")
+                )
+
     if insp.has_table("transactions"):
         tcols = {c["name"] for c in insp.get_columns("transactions")}
         with engine.begin() as conn:

@@ -197,7 +197,7 @@ class ToolCallLog(Base):
 
 
 class Upload(Base):
-    """Binary upload metadata; bytes live on disk under settings.upload_dir."""
+    """Binary upload metadata: local disk (storage_provider=local) or Supabase Storage object key."""
 
     __tablename__ = "uploads"
 
@@ -206,7 +206,9 @@ class Upload(Base):
     original_filename: Mapped[str] = mapped_column(String(512))
     content_type: Mapped[str | None] = mapped_column(String(128), nullable=True)
     size_bytes: Mapped[int] = mapped_column(Integer)
+    # Local: path under upload_dir. Supabase: object path inside bucket (same string shape: user_id/id_filename).
     storage_rel_path: Mapped[str] = mapped_column(String(1024))
+    storage_provider: Mapped[str] = mapped_column(String(32), default="local")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
 
     user: Mapped["User"] = relationship(back_populates="uploads")

@@ -24,7 +24,8 @@ async def lifespan(_app: FastAPI):
     settings = get_settings()
     if settings.openai_api_key:
         os.environ["OPENAI_API_KEY"] = settings.openai_api_key
-    Path(settings.upload_dir).mkdir(parents=True, exist_ok=True)
+    if not settings.use_supabase_storage():
+        Path(settings.upload_dir).mkdir(parents=True, exist_ok=True)
     init_db()
     yield
 

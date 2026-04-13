@@ -6,14 +6,13 @@ import base64
 import json
 import re
 from datetime import date, datetime, timezone
-from pathlib import Path
 from typing import Any
 
 from sqlalchemy.orm import Session
 
 from app.config.settings import Settings
 from app.models.db_models import Receipt, Upload
-from app.services.file_storage import absolute_path
+from app.services.file_storage import read_upload_bytes
 
 
 def _mime_for_upload(upload: Upload) -> str:
@@ -65,11 +64,12 @@ def extract_receipt_from_upload(
             "error": "PDF receipts are not supported yet—please upload a photo or screenshot (PNG/JPEG).",
         }
 
-    path: Path = absolute_path(settings, up.storage_rel_path)
-    if not path.is_file():
+    try:
+        data = read_upload_bytes(settings, up)
+    except FileNotFoundError:
         return {"ok": False, "error": "File bytes missing on server."}
-
-    data = path.read_bytes()
+    except RuntimeError as e:
+        return {"ok": False, "error": str(e)}
     if len(data) > 20_000_000:
         return {"ok": False, "error": "Image too large."}
 

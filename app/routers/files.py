@@ -1,11 +1,11 @@
-"""Upload and download handlers — replace `save_bytes` target with cloud storage later."""
+"""Upload and download: local disk (dev) or Supabase Storage when SUPABASE_* env is set."""
 
 from __future__ import annotations
 
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, File, Form, Header, HTTPException, Query, UploadFile, status
-from fastapi.responses import FileResponse
+from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
 from app.config.settings import Settings, get_settings
@@ -13,7 +13,7 @@ from app.db.session import get_db
 from app.deps.auth_session import assert_path_user_matches
 from app.models.db_models import Upload, User
 from app.schemas.uploads import MultiUploadResponse, SingleUploadResponse
-from app.services.file_storage import absolute_path, save_bytes
+from app.services.file_storage import read_upload_bytes, save_bytes
 
 router = APIRouter(tags=["files"])
 
@@ -55,7 +55,7 @@ async def upload_files(
         )
         db.add(row)
         db.flush()
-        rel = save_bytes(
+        rel, provider = save_bytes(
             settings,
             user_id=user_id,
             upload_id=row.id,
@@ -64,6 +64,7 @@ async def upload_files(
             content_type=row.content_type,
         )
         row.storage_rel_path = rel
+        row.storage_provider = provider
         db.commit()
         db.refresh(row)
         results.append(
@@ -84,16 +85,21 @@ def download_file(
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
     authorization: str | None = Header(None),
-) -> FileResponse:
+) -> Response:
     assert_path_user_matches(user_id, db, authorization)
     row = db.get(Upload, file_id)
     if row is None or row.user_id != user_id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found.")
-    path = absolute_path(settings, row.storage_rel_path)
-    if not path.is_file():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File missing on disk.")
-    return FileResponse(
-        path=str(path),
-        filename=row.original_filename,
+    try:
+        data = read_upload_bytes(settings, row)
+    except FileNotFoundError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="File not found.") from None
+    except RuntimeError as e:
+        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(e)) from e
+    return Response(
+        content=data,
         media_type=row.content_type or "application/octet-stream",
+        headers={
+            "Content-Disposition": f'inline; filename="{row.original_filename}"',
+        },
     )
